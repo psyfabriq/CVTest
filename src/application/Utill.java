@@ -33,7 +33,7 @@ public class Utill {
 	public static BufferedImage Mat2BufferedImage(Mat matrix)throws IOException {
 	    MatOfByte mob=new MatOfByte();
 	    Imgcodecs.imencode(".jpg", matrix, mob);
-	    return ImageIO.read(new ByteArrayInputStream(mob.toArray()));
+	    return ImageIO.read(new ByteArrayInputStream(mob.toArray())); 
 	}
 	
 	public static Image getImage(Mat matrix) {
