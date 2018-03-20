@@ -147,7 +147,7 @@ public class FXController implements Initializable {
 
 	    @FXML
 	    void handleFindContursButtonAction(ActionEvent event) {
-
+	    	Utill.detectObject(bufferedImage, bufferedTemplateImage);
 	    }
 
 	    @FXML
