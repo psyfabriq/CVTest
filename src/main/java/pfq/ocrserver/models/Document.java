@@ -87,6 +87,12 @@ public abstract class Document implements Cloneable {
 		this.croppedImage = croppedImage;
 	}
 	
+	
+	
+	public Map<String, Mat> getListObjectsToFound() {
+		return listObjectsToFound;
+	}
+
 	public abstract void startWork();
 	
 	

@@ -4,7 +4,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
@@ -19,6 +21,8 @@ import org.opencv.imgproc.Imgproc;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -26,10 +30,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
 import pfq.ocrserver.models.Document;
 import pfq.ocrserver.observer.EventListener;
 import pfq.ocrserver.state.ContextDocument;
@@ -67,6 +74,9 @@ public class FXController implements Initializable, EventListener {
 
 	@FXML
 	private ImageView test5Frame;
+	
+    @FXML
+    private ListView<String> listTest;
 
 	@FXML
 	private Label label1;
@@ -130,6 +140,10 @@ public class FXController implements Initializable, EventListener {
 
 	private BufferedImage bufferedImage;
 	private ContextDocument document;
+	private ObservableList<String> items;
+	private Map<String,Mat> listObjectsToFound;
+
+
 
 	@FXML
 	void handleOpenFileButtonAction(ActionEvent event) {
@@ -168,13 +182,29 @@ public class FXController implements Initializable, EventListener {
 	public void initialize(URL location, ResourceBundle resources) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		System.out.println("View is now loaded!");
+		initListView();
+	    
 	}
+	
+	private void initListView() {
+		items = listTest.getItems();
+		listTest.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+		   // System.out.println("ListView Selection Changed (selected: " + newValue.toString() + ")");
+		    test5Frame.setImage(Utill.getImage(listObjectsToFound.get(newValue.toString())));
+		});
+	}
+	
+
 
 	@Override
 	public void update(Document doc) {
+		items.clear();
 		test1Frame.setImage(Utill.getImage(doc.getMatchoutput()));
 		test2Frame.setImage(Utill.getImage(doc.getImg()));
 		test3Frame.setImage(Utill.getImage(doc.getOutputImage()));
 		test4Frame.setImage(Utill.getImage(doc.getCroppedImage()));
+		listObjectsToFound = doc.getListObjectsToFound();
+		listObjectsToFound.forEach((k,v)->items.add(k));
+	
 	}
 }

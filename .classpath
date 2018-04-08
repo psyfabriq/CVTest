@@ -28,9 +28,9 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/psyfabriq/.cv/opencv/build/bin/opencv-341.jar">
+	<classpathentry kind="lib" path="/home/psyfabriq/.opencv/opencv/build/bin/opencv-341.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/psyfabriq/.cv/opencv/build/lib"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/psyfabriq/.opencv/opencv/build/lib"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>

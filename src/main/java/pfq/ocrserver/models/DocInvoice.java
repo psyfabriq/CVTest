@@ -43,31 +43,28 @@ public class DocInvoice extends Document{
 
 	@Override
 	public void startWork() {
-		getHeader();
-		getNumberDocument();
+		getTemplate("header",12,true);
+		getTemplate("type",12,true);
+		getTemplate("body",12,true);
+		getTemplate("bottom",12,false);
+		Map<String,Mat> listObj = Utill.detectTable(getImg());
+		listObj.forEach((k,v)->listObjectsToFound.put(k,v));
+
 	}
-	private void getHeader() {
+	
+	private void getTemplate(String name, int goodMaches,boolean topCaut) {
 		try {
-			File f = ResourceUtils.getFile(path+"invoice/header.jpg");
+			File f = ResourceUtils.getFile(path+"invoice/"+name+".jpg");
 			if (f != null) {
-				Map<String,Mat> listObj = Utill.cutImage(getImg(),Utill.BufferedImage2Mat(ImageIO.read(f)),12,true,false);
-				this.img = listObj.get("source");
-				this.listObjectsToFound.put("header",listObj.get("image"));
+				Map<String,Mat> listObj = Utill.cutImage(getImg(),Utill.BufferedImage2Mat(ImageIO.read(f)),goodMaches,topCaut,true);
+				this.img = listObj.get("source")!=null?listObj.get("source"):this.img;
+				if(listObj.get("image")!=null)
+				this.listObjectsToFound.put(name,listObj.get("image"));
 			}
 		} catch (IOException e) {
+			System.out.print(e);
 		}
 
 	}
 	
-	private void getNumberDocument() {
-		try {
-			File f = ResourceUtils.getFile(path+"invoice/type.jpg");
-			if (f != null) {
-				Map<String,Mat> listObj = Utill.cutImage(getImg(),Utill.BufferedImage2Mat(ImageIO.read(f)),12,true,true);
-				this.img = listObj.get("source");
-				this.listObjectsToFound.put("number",listObj.get("image"));
-			}
-		} catch (IOException e) {
-		}
-	}
 }

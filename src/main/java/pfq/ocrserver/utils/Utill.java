@@ -103,40 +103,27 @@ public class Utill {
 	public static HashMap<String,Object> detectObject(BufferedImage source, BufferedImage template,int number_of_occurrences) {
 		
 		HashMap<String,Object> result = new HashMap<>();
-		 try {
-			// template = ImageUtill.toGray(template);
-			// template = ImageUtill.binarize(template);
-			// BufferedImage sources = ImageUtill.toGray(source);
-			// sources = ImageUtill.binarize(sources);
-			 
+		 try {	 
 			Mat objectImage       = Utill.BufferedImage2Mat(template);
 			Mat sceneImage        = Utill.BufferedImage2Mat(source);  
 			
 			MatOfKeyPoint objectKeyPoints = new MatOfKeyPoint();
 	        FeatureDetector featureDetector = FeatureDetector.create(FeatureDetector.SIFT);
-	        //System.out.println("Detecting key points...");
 	        featureDetector.detect(objectImage, objectKeyPoints);
 	        KeyPoint[] keypoints = objectKeyPoints.toArray();
-	       // System.out.println(keypoints);
 
 	        MatOfKeyPoint objectDescriptors = new MatOfKeyPoint();
 	        DescriptorExtractor descriptorExtractor = DescriptorExtractor.create(DescriptorExtractor.SIFT);
-	        //System.out.println("Computing descriptors...");
 	        descriptorExtractor.compute(objectImage, objectKeyPoints, objectDescriptors);
 
-	        // Create the matrix for output image.
 	        Mat outputImage = new Mat(objectImage.rows(), objectImage.cols(), Imgcodecs.CV_LOAD_IMAGE_COLOR);
 	        Scalar newKeypointColor = new Scalar(255, 0, 0);
 
-	       // System.out.println("Drawing key points on object image...");
 	        Features2d.drawKeypoints(objectImage, objectKeyPoints, outputImage, newKeypointColor, 0);
 
-	        // Match object image with the scene image
 	        MatOfKeyPoint sceneKeyPoints = new MatOfKeyPoint();
 	        MatOfKeyPoint sceneDescriptors = new MatOfKeyPoint();
-	       // System.out.println("Detecting key points in background image...");
 	        featureDetector.detect(sceneImage, sceneKeyPoints);
-	       // System.out.println("Computing descriptors in background image...");
 	        descriptorExtractor.compute(sceneImage, sceneKeyPoints, sceneDescriptors);
 
 	        Mat matchoutput = new Mat(sceneImage.rows() * 2, sceneImage.cols() * 2, Imgcodecs.CV_LOAD_IMAGE_COLOR);
@@ -144,13 +131,10 @@ public class Utill {
 
 	        List<MatOfDMatch> matches = new LinkedList<MatOfDMatch>();
 	        DescriptorMatcher descriptorMatcher = DescriptorMatcher.create(DescriptorMatcher.FLANNBASED);
-	      //  System.out.println("Matching object and scene images...");
 	        descriptorMatcher.knnMatch(objectDescriptors, sceneDescriptors, matches, 2);
 
-	       // System.out.println("Calculating good match list...");
 	        LinkedList<DMatch> goodMatchesList = new LinkedList<DMatch>();
 	        float nndrRatio = 0.6f;
-	       // System.out.println(matches.size());
 	        for (int i = 0; i < matches.size(); i++) {
 	            MatOfDMatch matofDMatch = matches.get(i);
 	            DMatch[] dmatcharray = matofDMatch.toArray();
@@ -164,11 +148,8 @@ public class Utill {
 	        }
 	        System.out.println(goodMatchesList.size() );
 	        if (goodMatchesList.size() >= number_of_occurrences) {
-	         //   System.out.println("Object Found!!!");
-
 	            List<KeyPoint> objKeypointlist = objectKeyPoints.toList();
 	            List<KeyPoint> scnKeypointlist = sceneKeyPoints.toList();
-
 	            LinkedList<Point> objectPoints = new LinkedList<>();
 	            LinkedList<Point> scenePoints = new LinkedList<>();
 
@@ -192,7 +173,6 @@ public class Utill {
 	            obj_corners.put(2, 0, new double[]{objectImage.cols(), objectImage.rows()});
 	            obj_corners.put(3, 0, new double[]{0, objectImage.rows()});
 
-	          //  System.out.println("Transforming object corners to scene corners...");
 	            Core.perspectiveTransform(obj_corners, scene_corners, homography);
 
 	            Mat img = BufferedImage2Mat(source);
@@ -201,17 +181,8 @@ public class Utill {
 	            Point ocvPOut1 = new Point(scene_corners.get(1, 0));
 	            Point ocvPOut2 = new Point(scene_corners.get(2, 0));
 	            Point ocvPOut3 = new Point(scene_corners.get(3, 0));
-	            
-	            System.out.println(ocvPOut1);
-	            System.out.println(ocvPOut2);
-	            System.out.println(ocvPOut3);
-	            System.out.println(ocvPOut4);
-	            
-	        
-	            
-	    
+	
 	            Rect rectCrop = getRectangleFromFourCounts(ocvPOut1,ocvPOut2,ocvPOut3,ocvPOut4);
-	       //     System.out.println(rectCrop);
 	             
 	            Mat croppedImage = null;
 				try {
@@ -221,25 +192,18 @@ public class Utill {
 				} catch (CvException  e) {
 
 				}
+				/*
 				Imgproc.circle(img,ocvPOut1,5,new Scalar(0, 255, 0), 4);//зеленый 
 				Imgproc.circle(img,ocvPOut2,5,new Scalar(0, 0, 255), 4);//красный
 				Imgproc.circle(img,ocvPOut3,5,new Scalar(255, 0, 0), 4);//синий
 				Imgproc.circle(img,ocvPOut4,5,new Scalar(255, 255, 0), 4);//голубой
-				
+				*/
 
-				
-				
-				
-			   // System.out.println(getConer(new Point(1,1), ocvPOut2));
-			   // System.out.println(getConer(new Point(1,1), ocvPOut3));
-				
-				//System.out.println(checkNeedRotate(ocvPOut4, ocvPOut2));
 	          //  Imgproc.line(img, ocvPOut4, ocvPOut1, new Scalar(0, 255, 0), 4); // top line
-	         //   Imgproc.line(img, ocvPOut1, ocvPOut2, new Scalar(0, 255, 0), 4);//right
-	         //   Imgproc.line(img, ocvPOut2, ocvPOut3, new Scalar(0, 255, 0), 4);
-	         //   Imgproc.line(img, ocvPOut3, ocvPOut4, new Scalar(0, 255, 0), 4);
+	          //   Imgproc.line(img, ocvPOut1, ocvPOut2, new Scalar(0, 255, 0), 4);//right
+	          //   Imgproc.line(img, ocvPOut2, ocvPOut3, new Scalar(0, 255, 0), 4);
+	          //   Imgproc.line(img, ocvPOut3, ocvPOut4, new Scalar(0, 255, 0), 4);
 
-	         //   System.out.println("Drawing matches image...");
 	            MatOfDMatch goodMatches = new MatOfDMatch();
 	            goodMatches.fromList(goodMatchesList);
 
@@ -258,7 +222,6 @@ public class Utill {
 	            result.put("outputImage", outputImage);
 	            result.put("matchoutput", matchoutput);
 	            result.put("img", img);
-	            
 	            result.put("goodMatches", goodMatchesList.size());
 	            result.put("found", true);
 	            
@@ -318,12 +281,70 @@ public class Utill {
 		return f;
 	}
 	
+	 public static Map<String,Mat> detectTable(Mat sceneImage){
+		  
+		    Map<String,Mat> result = new HashMap<String,Mat>();
+		 
+		    Mat img_gray =new Mat(sceneImage.size(), CvType.CV_8UC4),
+		    	img_bw=new Mat(sceneImage.size(), CvType.CV_32F);
+		    
+		    Imgproc.cvtColor(sceneImage, img_gray, Imgproc.COLOR_RGB2GRAY);
+		    
+		    Imgproc.adaptiveThreshold(img_gray, img_bw, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY, 15, -2);
+		    
+		    result.put("blackwite", img_bw);
+		    
+		    Mat horizontal = img_bw.clone();
+		    Mat vertical = img_bw.clone();
+		    
+		    
+		    // ############################# Horizontal
+		    
+		    int scale = 15; // play with this variable in order to increase/decrease the amount of lines to be detected
+		    // Specify size on horizontal axis
+		    int horizontalsize = horizontal.cols() / scale;
+		    
+		    // Create structure element for extracting horizontal lines through morphology operations
+		    Mat horizontalStructure = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(horizontalsize,1));
+		    
+		    // Apply morphology operations
+		    Imgproc.erode(horizontal, horizontal, horizontalStructure, new Point(-1, -1),2);
+		    Imgproc.dilate(horizontal, horizontal, horizontalStructure, new Point(-1, -1),2);
+		    
+		    result.put("horizontal", horizontal);
+		    
+		    // ############################# Vertical
+		    
+		    // Specify size on vertical axis
+		    int verticalsize = vertical.rows() / scale;
+
+		    // Create structure element for extracting vertical lines through morphology operations
+		    Mat verticalStructure = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 1,verticalsize));
+
+		    // Apply morphology operations
+		    Imgproc.erode(vertical, vertical, verticalStructure, new Point(-1, -1),2);
+		    Imgproc.dilate(vertical, vertical, verticalStructure, new Point(-1, -1),2);
+		    
+		    result.put("vertical", vertical);
+		    
+		    
+		    //Mat mask = horizontal + vertical;
+		 //   adaptiveThreshold(~gray, bw, 255, CV_ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 15, -2);
+
+		    
+		 return result;
+	 }
+	
 	@SuppressWarnings("deprecation")
 	public static Map<String,Mat> cutImage(Mat sceneImage, Mat objectImage,int number_of_occurrences ,boolean topCut, boolean sourceWidth) {
 		
 		Map<String,Mat> result = new HashMap<String,Mat>();
 		
 		try {
+			
+			//Imgproc.cvtColor(sceneImage, sceneImage, Imgproc.COLOR_RGB2GRAY);
+			//Imgproc.cvtColor(objectImage, objectImage, Imgproc.COLOR_RGB2GRAY);
+
 			
 			MatOfKeyPoint objectKeyPoints = new MatOfKeyPoint();
 			FeatureDetector featureDetector = FeatureDetector.create(FeatureDetector.SIFT);
@@ -332,7 +353,7 @@ public class Utill {
 			DescriptorExtractor descriptorExtractor = DescriptorExtractor.create(DescriptorExtractor.SIFT);
 			descriptorExtractor.compute(objectImage, objectKeyPoints, objectDescriptors);
 
-			Mat outputImage = new Mat(objectImage.rows(), objectImage.cols(), Imgcodecs.CV_LOAD_IMAGE_COLOR);
+			Mat outputImage = new Mat(objectImage.rows(), objectImage.cols(), Imgcodecs.CV_LOAD_IMAGE_ANYCOLOR);
 			Scalar newKeypointColor = new Scalar(255, 0, 0);
 
 			Features2d.drawKeypoints(objectImage, objectKeyPoints, outputImage, newKeypointColor, 0);
@@ -359,7 +380,8 @@ public class Utill {
 
 				}
 			}
-
+			System.out.println("##############################################################");
+			System.out.println(goodMatchesList.size());
 			if (goodMatchesList.size() >= number_of_occurrences) {
 				// System.out.println("Object Found!!!");
 

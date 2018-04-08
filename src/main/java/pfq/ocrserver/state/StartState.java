@@ -57,9 +57,9 @@ public class StartState implements State {
 				context.docType  = v.getDocType();
 				context.prosent  = 10;
 				//context.needRotate = needrotate;
+				
 		  //  }
 		  // else {
-		    System.out.println("##########################################################");
 		   //	System.out.println(mmr.maxVal );
 		    //}
 	        
@@ -93,13 +93,7 @@ public class StartState implements State {
 
 					if(context.document == null || context.document.getGoodMatches() < v.getGoodMatches()) {
 						
-						if (v.getCroppedImage() != null) {
-							
-						//	context.document = v;
-						//	context.docType  = v.getDocType();
-						//	context.prosent  = 10;
-							//context.needRotate = needrotate;
-							
+						if (v.getCroppedImage() != null) {				
 							check(v,context);
 						}
 
