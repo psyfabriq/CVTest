@@ -49,6 +49,7 @@ public class DocInvoice extends Document{
 		getTemplate("bottom",12,false);
 		Map<String,Mat> listObj = Utill.detectTable(getImg());
 		listObj.forEach((k,v)->listObjectsToFound.put(k,v));
+		listObjectsToFound.put("L", Utill.drawTableLines(getImg()));
 
 	}
 	

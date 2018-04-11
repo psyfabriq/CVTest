@@ -281,7 +281,61 @@ public class Utill {
 		return f;
 	}
 	
+	public static Mat drawTableLines(Mat sceneImage) {
+		
+		double ratio2 = 3;
+		int kernel_size = 3;
+		double lowThreshold = 60;
+		
+		Mat img = sceneImage.clone();
+		
+		Mat img_gray = new Mat(sceneImage.size(), CvType.CV_8UC4);
+		Mat edges    = new Mat();
+		Mat lines    = new Mat();
+
+		Imgproc.cvtColor(sceneImage, img_gray, Imgproc.COLOR_RGB2GRAY);
+		Imgproc.blur(img_gray, img_gray, new Size(3, 3));
+		Imgproc.Canny(img_gray, edges, lowThreshold, lowThreshold * ratio2,kernel_size,false);
+	
+		//Imgproc.Canny
+	
+		//Imgproc.HoughLines(edges, lines, 2, Math.PI / 180, 300);
+		Imgproc.HoughLines(edges, lines, 1, Math.PI / 180, 300);
+
+		System.out.println(lines.rows());
+		
+		for (int i = 0; i < lines.rows(); i++){
+			double data[] = lines.get(i, 0);
+			double rho = data[0];
+			double theta = data[1];
+			double cosTheta = Math.cos(theta);
+			double sinTheta = Math.sin(theta);
+			double x0 = cosTheta * rho;
+			double y0 = sinTheta * rho;
+			Point pt1 = new Point(x0 + 10000 * (-sinTheta), y0 + 10000 * cosTheta);
+			Point pt2 = new Point(x0 - 10000 * (-sinTheta), y0 - 10000 * cosTheta);
+			Imgproc.line(img, pt1, pt2, new Scalar(0, 0, 200), 3);
+		}
+		
+		
+		/*
+		for (int i = 0; i < lines.rows(); i++) {
+			double[] val = lines.get(i, 0);
+			Imgproc.line(img, new Point(val[0], val[1]), new Point(val[2], val[3]), new Scalar(0, 0, 255), 2);
+		}
+		
+		*/
+		
+
+		return img;
+	}
+	
 	 public static Map<String,Mat> detectTable(Mat sceneImage){
+		 
+			double ratio2 = 2;
+			int kernel_size = 3;
+			double lowThreshold = 50;
+			
 		  
 		    Map<String,Mat> result = new HashMap<String,Mat>();
 		 
@@ -289,9 +343,11 @@ public class Utill {
 		    	img_bw=new Mat(sceneImage.size(), CvType.CV_32F);
 		    
 		    Imgproc.cvtColor(sceneImage, img_gray, Imgproc.COLOR_RGB2GRAY);
+		    Imgproc.blur(img_gray, img_gray, new Size(3, 3));
 		    
-		    Imgproc.adaptiveThreshold(img_gray, img_bw, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY, 15, -2);
-		    
+		   // Imgproc.adaptiveThreshold(img_gray, img_bw, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY, 5, -2);
+			Imgproc.Canny(img_gray, img_bw, lowThreshold, lowThreshold * ratio2,kernel_size,false);
+
 		    result.put("blackwite", img_bw);
 		    
 		    Mat horizontal = img_bw.clone();
