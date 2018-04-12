@@ -15,6 +15,7 @@ public class MemoryUtil {
 	
 	static {
 		SINGLETON = new MemoryUtil();
+		////****
 	}
 	
 	
